@@ -3,20 +3,20 @@ import wpilib
 from wpilib import SmartDashboard
 from wpilib.buttons import JoystickButton
 
-from commands.align import Align
-from commands.set_alignment_speed import SetAlignmentSpeed
+from commands.align_slider import AlignSlider
+from commands.set_slider_speed import SetSliderSpeed
 
-from subsystems.hatchaligner import HatchAligner
+from subsystems.slider import Slider
 
 class OI(object):
 
     def __init__(self, robot):
         self.joystick = wpilib.Joystick(0)
-        JoystickButton(self.joystick, 4).whenPressed(Align(robot))
+        JoystickButton(self.joystick, 4).whenPressed(AlignSlider(robot))
 
-        SmartDashboard.putData("Move Left" , SetAlignmentSpeed(robot, HatchAligner.LEFT ))
-        SmartDashboard.putData("Stop"      , SetAlignmentSpeed(robot, HatchAligner.STOP ))
-        SmartDashboard.putData("Move Right", SetAlignmentSpeed(robot, HatchAligner.RIGHT))
+        SmartDashboard.putData("Move Left" , SetSliderSpeed(robot, Slider.LEFT ))
+        SmartDashboard.putData("Stop"      , SetSliderSpeed(robot, Slider.STOP ))
+        SmartDashboard.putData("Move Right", SetSliderSpeed(robot, Slider.RIGHT))
 
     def getJoystick(self):
         return self.joystick
