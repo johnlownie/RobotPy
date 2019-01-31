@@ -45,7 +45,7 @@ class MyRobot(wpilib.TimedRobot):
         return super().teleopPeriodic()
 
     def log(self):
-        pass
+        self.drivetrain.log()
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
