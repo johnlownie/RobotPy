@@ -1,65 +1,28 @@
-#
-# See the documentation for more details on how this works
-#
-# The idea here is you provide a simulation object that overrides specific
-# pieces of WPILib, and modifies motors/sensors accordingly depending on the
-# state of the simulation. An example of this would be measuring a motor
-# moving for a set period of time, and then changing a limit switch to turn
-# on after that period of time. This can help you do more complex simulations
-# of your robot code without too much extra effort.
-#
-
-
-from pyfrc.physics import motor_cfgs, tankmodel
-from pyfrc.physics.units import units
-
-
 class PhysicsEngine(object):
+    """
+        Simulates a single motor connected to an encoder to make the
+        motion magic example work correctly
+    """
+
     def __init__(self, physics_controller):
+        """
+            :param physics_controller: `pyfrc.physics.core.PhysicsInterface` object
+                                       to communicate simulation effects to
+        """
+
         self.physics_controller = physics_controller
         self.position = 0
 
-        # Change these parameters to fit your robot!
-        bumper_width = 3.25 * units.inch
-
-        # fmt: off
-        self.drivetrain = tankmodel.TankModel.theory(
-            motor_cfgs.MOTOR_CFG_CIM,           # motor configuration
-            110 * units.lbs,                    # robot mass
-            10.71,                              # drivetrain gear ratio
-            2,                                  # motors per side
-            19.5 * units.inch,                  # robot wheelbase
-            24 * units.inch + bumper_width * 2, # robot width
-            35 * units.inch + bumper_width * 2, # robot length
-            7.5 * units.inch,                   # wheel diameter
-        )
-        # fmt: on
-
     def update_sim(self, hal_data, now, tm_diff):
-        # Simulate the drivetrain
-        l_motor = hal_data["pwm"][1]["value"]
-        r_motor = hal_data["pwm"][2]["value"]
 
-        x, y, angle = self.drivetrain.get_distance(l_motor, r_motor, tm_diff)
-        self.physics_controller.distance_drive(x, y, angle)
+        try:
+            talon_data = hal_data["CAN"][3]
+        except (KeyError, IndexError):
+            # talon must not be initialized yet
+            return
 
-        # update position (use tm_diff so the rate is constant)
-        self.position += hal_data["pwm"][4]["value"] * tm_diff * 3
-
-        # update limit switches based on position
-        if self.position <= 0:
-            switch1 = True
-            switch2 = False
-
-        elif self.position > 10:
-            switch1 = False
-            switch2 = True
-
-        else:
-            switch1 = False
-            switch2 = False
-
-        # set values here
-        hal_data["dio"][1]["value"] = switch1
-        hal_data["dio"][2]["value"] = switch2
-        hal_data["analog_in"][2]["voltage"] = self.position
+        # encoder increments speed mutiplied by the time by some constant
+        # -> must be an integer
+        speed = int(4096 * 4 * talon_data["value"] * tm_diff)
+        talon_data["quad_position"] += speed
+        talon_data["quad_velocity"] = speed
