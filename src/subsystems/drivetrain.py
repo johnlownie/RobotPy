@@ -1,11 +1,21 @@
 import math
 import wpilib
+import ctre
 
 from wpilib.command.subsystem import Subsystem
 from wpilib.drive import DifferentialDrive
 from navx import AHRS
 
 class DriveTrain(Subsystem):
+    # set constants
+    WHEEL_DIAMETER = 0.625
+    ENCODER_PULSE_PER_REV = 4096
+    SLOTIDX = 0
+    PIDLOOPIDX = 0
+    TIMEOUT_MS = 100
+    ENCODER_CONSTANT = (1 / ENCODER_PULSE_PER_REV) * WHEEL_DIAMETER * math.pi
+
+    # set PIDF values
     if robot.isReal():
         kP = 0.03
         kI = 0.00
@@ -20,29 +30,36 @@ class DriveTrain(Subsystem):
     kToleranceDegrees = 2.0
 
     def __init__(self, robot):
-        self.left_front_motor = wpilib.Talon(1)
-        self.left_rear_motor  = wpilib.Talon(2)
-        self.left = wpilib.SpeedControllerGroup(self.left_front_motor, self.left_rear_motor)
-        self.left.setInverted(False)
+        left_front_motor = ctre.WPI_TalonSRX(1)
+        left_front_motor.setInverted(False)
+        left_front_motor.setNeutralMode(NeutralMode.Brake)
+        self.left_front_motor = left_front_motor
 
-        self.right_front_motor = wpilib.Talon(3)
-        self.right_rear_motor  = wpilib.Talon(4)
-        self.right = wpilib.SpeedControllerGroup(self.right_front_motor, self.right_rear_motor)
-        self.right.setInverted(True)
+        left_rear_motor = ctre.WPI_TalonSRX(2)
+        left_rear_motor.setInverted(False)
+        left_rear_motor.setNeutralMode(NeutralMode.Brake)
+        left_rear_motor.follow(left_front_motor)
+        self.left_rear_motor = left_rear_motor
+
+        right_front_motor = ctre.WPI_TalonSRX(3)
+        right_front_motor.setInverted(True)
+        right_front_motor.setNeutralMode(NeutralMode.Brake)
+        self.right_front_motor = right_front_motor
+       
+        right_rear_motor  = ctre.WPI_TalonSRX(4)
+        right_rear_motor.setInverted(True)
+        right_rear_motor.setNeutralMode(NeutralMode.Brake)
+        right_rear_motor.follow(right_front_motor)
+        self.right_rear_motor = right_rear_motor
+
+        self.left = wpilib.SpeedControllerGroup(left_front_motor, left_rear_motor)
+        self.right = wpilib.SpeedControllerGroup(right_front_motor, right_rear_motor)
 
         self.drive = wpilib.drive.DifferentialDrive(self.left, self.right)
+        self.drive.setDeadband(0)
         self.drive.setSafetyEnabled(False)
-
-        self.left_encoder  = wpilib.Encoder(1, 2)
-        self.right_encoder = wpilib.Encoder(3, 4)
-
-        if robot.isReal():
-            self.left_encoder.setDistancePerPulse(0.042)
-            self.right_encoder.setDistancePerPulse(0.042)
-        else:
-            self.left_encoder.setDistancePerPulse((7.5 / 12.0 * math.pi) / 360.0)
-            self.right_encoder.setDistancePerPulse((7.5 / 12.0 * math.pi) / 360.0)
-
+        
+        # setup NavX and turn controller
         self.ahrs = AHRS.create_spi
 
         turnController = wpilib.PIDController(self.kP, self.kI, self.kD, self.kF, self.ahrs, output=self)
@@ -54,6 +71,7 @@ class DriveTrain(Subsystem):
         self.turnController = turnController
         self.rotateToAngleRate = 0
 
+        # setup LiveWindow
         wpilib.LiveWindow.addActuator("DriveTrain", "Front Left Motor", self.left_front_motor)
         wpilib.LiveWindow.addActuator("DriveTrain", "Rear Left Motor", self.left_rear_motor)
         wpilib.LiveWindow.addActuator("DriveTrain", "Front Right Motor", self.right_front_motor)
@@ -66,11 +84,26 @@ class DriveTrain(Subsystem):
     def arcadeDrive(self, speed, rotation):
         self.drive.arcadeDrive(speed, rotation)
 
-    def reset(self):
-        self.left_encoder.reset()
-        self.right_encoder.reset()
-        self.ahrs.reset()
-        
+    def resetDrive(self):
+        self.left_front_motor.set(WPI_TalonSRX.ControlMode.PercentOutput, 0)
+        self.left_rear_motor.set(WPI_TalonSRX.ControlMode.PercentOutput, 0)
+        self.right_front_motor.set(WPI_TalonSRX.ControlMode.PercentOutput, 0)
+        self.right_rear_motor.set(WPI_TalonSRX.ControlMode.PercentOutput, 0)
+
+        self.left_rear_motor.follow(self.left_front_motor)
+        self.left_front_motor.setInverted(False)
+        self.left_rear_motor.setInverted(False)
+
+        self.right_rear_motor.follow(self.right_front_motor)
+        self.right_front_motor.setInverted(True)
+        self.right_rear_motor.setInverted(True)
+
+        self.turnController.disable()
+
+    def resetEncoders(self):
+        self.left_front_motor.setSelectedSensorPosition(0, PIDLOOPIDX, TIMEOUT_MS)
+        self.right_front_motor.setSelectedSensorPosition(0, PIDLOOPIDX, TIMEOUT_MS)
+
     def stop(self):
         self.drive.arcadeDrive(0, 0)
 
