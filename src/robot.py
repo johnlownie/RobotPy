@@ -2,10 +2,14 @@
 
 import numpy as np
 import wpilib
+
 from networktables import NetworkTables
 from networktables import NetworkTablesInstance
 from wpilib import Timer
 from wpilib.shuffleboard import Shuffleboard
+
+from subsystems.oi import OI
+from subsystems.slider import Slider
 
 class MyRobot(wpilib.TimedRobot):
     table = NetworkTablesInstance.getDefault().getTable("Shuffleboard/LiveWindow")
@@ -14,7 +18,9 @@ class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self):
         # wpilib.CameraServer.launch("vision.py:main")
-        pass
+        self.slider = Slider(self)
+
+        self.oi = OI(self)
  
     def teleopInit(self):
         myEntry = (Shuffleboard.getTab("LiveWindow")
@@ -34,7 +40,12 @@ class MyRobot(wpilib.TimedRobot):
         self.x += 0.05
         self.y += 1.0
 
+        self.log()
+
         return super().teleopPeriodic()
+
+    def log(self):
+        pass
 
 if __name__ == "__main__":
     wpilib.run(MyRobot)
