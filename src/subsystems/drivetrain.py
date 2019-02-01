@@ -7,6 +7,7 @@ from wpilib.drive import DifferentialDrive
 from navx import AHRS
 from ctre.basemotorcontroller import BaseMotorController
 from commands.drive_by_joystick import DriveByJoystick
+from commands.drive_by_triggers import DriveByTriggers
 
 class DriveTrain(Subsystem):
     # set constants
@@ -91,7 +92,7 @@ class DriveTrain(Subsystem):
         self.left_front_motor.configSelectedFeedbackSensor( WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PIDLOOPIDX, self.TIMEOUT_MS )
 
     def arcadeDrive(self, speed, rotation):
-        self.drive.arcadeDrive(speed, rotation)
+        self.drive.arcadeDrive(speed, rotation * -1)
 
     def tankDrive(self, speed, rotation):
         self.drive.tankDrive(speed, speed)
@@ -121,7 +122,7 @@ class DriveTrain(Subsystem):
 
     def initDefaultCommand(self):
         print("[DriveTrain] setting default command")
-        self.setDefaultCommand(DriveByJoystick(self.robot))
+        self.setDefaultCommand(DriveByTriggers(self.robot))
 
     def log(self):
         pass
