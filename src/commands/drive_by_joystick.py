@@ -12,7 +12,16 @@ class DriveByJoystick(Command):
         pass
 
     def execute(self):
-        self.robot.drivetrain.arcadeDrive(self.robot.oi.getJoystick().getX(), self.robot.oi.getJoystick().getY())
+        xSpeed = self.robot.oi.getJoystick().getY()
+        zRotation = self.robot.oi.getJoystick().getX() * -1
+
+        if abs(xSpeed) <= self.robot.oi.XBOX_DEADZONE_LEFT_JOY:
+            xSpeed = 0.0
+
+        if abs(zRotation) <= self.robot.oi.XBOX_DEADZONE_LEFT_JOY:
+            zRotation = 0.0
+
+        self.robot.drivetrain.arcadeDrive(xSpeed, zRotation)
 
     def isFinished(self):
         return False

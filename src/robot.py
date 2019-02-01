@@ -6,9 +6,11 @@ import wpilib
 from networktables import NetworkTables
 from networktables import NetworkTablesInstance
 from wpilib import Timer
+from wpilib.command import Scheduler
 from wpilib.shuffleboard import Shuffleboard
 
 from subsystems.oi import OI
+from subsystems.drivetrain import DriveTrain
 from subsystems.slider import Slider
 
 class MyRobot(wpilib.TimedRobot):
@@ -18,31 +20,19 @@ class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self):
         # wpilib.CameraServer.launch("vision.py:main")
+        print("[Robot] Initialized")
+        self.drivetrain = DriveTrain(self)
         self.slider = Slider(self)
 
         self.oi = OI(self)
  
-    def teleopInit(self):
-        myEntry = (Shuffleboard.getTab("LiveWindow")
-            .add(title="Offsetter", value=0)
-            .withWidget("Number Bar")
-            .withProperties({"min": -6, "max": 6})
-            .getEntry())
-        # self.table.add(title="Offset", value=0)
-        #     .withWidget("Number Bar")
-        # self.table.putNumber("Z", 0.0)
+        # wpilib.SmartDashboard.putData(self.drivetrain)
 
+    def teleopInit(self):
         return super().teleopInit()
 
     def teleopPeriodic(self):
-        self.table.putNumber("X", self.x)
-        self.table.putNumber("Y", self.y)
-        self.x += 0.05
-        self.y += 1.0
-
-        self.log()
-
-        return super().teleopPeriodic()
+        Scheduler.getInstance().run()
 
     def log(self):
         self.drivetrain.log()
