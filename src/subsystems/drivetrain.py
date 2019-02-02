@@ -5,6 +5,7 @@ import ctre
 from wpilib.command.subsystem import Subsystem
 from wpilib.drive import DifferentialDrive
 from navx import AHRS
+from ctre import WPI_TalonSRX
 from ctre.basemotorcontroller import BaseMotorController
 from commands.drive_by_joystick import DriveByJoystick
 from commands.drive_by_triggers import DriveByTriggers
@@ -13,9 +14,10 @@ class DriveTrain(Subsystem):
     # set constants
     WHEEL_DIAMETER = 0.625
     ENCODER_PULSE_PER_REV = 4096
-    SLOTIDX = 0
-    PIDLOOPIDX = 0
+    SLOT_INDEX = 0
+    PID_LOOP_INDEX = 0
     TIMEOUT_MS = 100
+    NEUTRAL_DEADBAND_PERCENT = 1
     ENCODER_CONSTANT = (1 / ENCODER_PULSE_PER_REV) * WHEEL_DIAMETER * math.pi
 
     kToleranceDegrees = 2.0
@@ -89,7 +91,38 @@ class DriveTrain(Subsystem):
         # wpilib.LiveWindow.addSensor("DriveTrain", "Gyro", self.ahrs)
 
     def initAutonomousMode(self):
-        self.left_front_motor.configSelectedFeedbackSensor( WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PIDLOOPIDX, self.TIMEOUT_MS )
+        self.left_front_motor.configSelectedFeedbackSensor(WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PID_LOOP_INDEX, self.TIMEOUT_MS )
+
+    def initMotionProfilingMode(self):
+        print("[DriveTrain] Motion Profiling Mode Initialized")
+
+        self.left_front_motor.configSelectedFeedbackSensor(WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PID_LOOP_INDEX, self.TIMEOUT_MS)
+        self.left_front_motor.setSensorPhase(True)
+        self.left_front_motor.configNeutralDeadband(self.NEUTRAL_DEADBAND_PERCENT * 0.01, self.TIMEOUT_MS)
+
+        self.left_front_motor.config_kF(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
+        self.left_front_motor.config_kP(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
+        self.left_front_motor.config_kI(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
+        self.left_front_motor.config_kD(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
+
+        # self.left_front_motor.configMotionProfileTrajectoryPeriod(10, self.TIMEOUT_MS)
+        self.left_front_motor.setStatusFramePeriod(WPI_TalonSRX.StatusFrameEnhanced.Status_10_MotionMagic, 10, self.TIMEOUT_MS)
+        self.left_front_motor.configMotionCruiseVelocity(6800, self.TIMEOUT_MS)
+        self.left_front_motor.configMotionAcceleration(6800, self.TIMEOUT_MS)
+
+        self.right_front_motor.configSelectedFeedbackSensor(WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PID_LOOP_INDEX, self.TIMEOUT_MS)
+        self.right_front_motor.setSensorPhase(True)
+        self.right_front_motor.configNeutralDeadband(self.NEUTRAL_DEADBAND_PERCENT * 0.01, self.TIMEOUT_MS)
+
+        self.right_front_motor.config_kF(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
+        self.right_front_motor.config_kP(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
+        self.right_front_motor.config_kI(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
+        self.right_front_motor.config_kD(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
+
+        # self.right_front_motor.configMotionProfileTrajectoryPeriod(10, self.TIMEOUT_MS)
+        self.right_front_motor.setStatusFramePeriod(WPI_TalonSRX.StatusFrameEnhanced.Status_10_MotionMagic, 10, self.TIMEOUT_MS)
+        self.right_front_motor.configMotionCruiseVelocity(6800, self.TIMEOUT_MS)
+        self.right_front_motor.configMotionAcceleration(6800, self.TIMEOUT_MS)
 
     def arcadeDrive(self, speed, rotation):
         self.drive.arcadeDrive(speed, rotation * -1)
@@ -114,8 +147,8 @@ class DriveTrain(Subsystem):
         # self.turnController.disable()
 
     def resetEncoders(self):
-        self.left_front_motor.setSelectedSensorPosition(0, PIDLOOPIDX, TIMEOUT_MS)
-        self.right_front_motor.setSelectedSensorPosition(0, PIDLOOPIDX, TIMEOUT_MS)
+        self.left_front_motor.setSelectedSensorPosition(0, PID_LOOP_INDEX, TIMEOUT_MS)
+        self.right_front_motor.setSelectedSensorPosition(0, PID_LOOP_INDEX, TIMEOUT_MS)
 
     def stop(self):
         self.drive.arcadeDrive(0, 0)
