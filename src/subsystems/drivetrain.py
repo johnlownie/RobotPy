@@ -22,7 +22,7 @@ class DriveTrain(Subsystem):
 
     def __init__(self, robot):
         print("[DriveTrain] Initialized")
-        super().__init__()
+        super().__init__("DriveTrain")
         self.robot = robot
 
         # set PIDF values
