@@ -19,6 +19,9 @@ class PhysicsEngine(object):
         """
 
         self.physics_controller = physics_controller
+        self.position = 0
+
+        self.physics_controller.add_device_gyro_channel("navxmxp_spi_4_angle")
 
         # Change these parameters to fit your robot!
         bumper_width = 3.25 * units.inch

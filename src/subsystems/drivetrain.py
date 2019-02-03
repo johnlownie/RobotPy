@@ -23,7 +23,6 @@ class DriveTrain(Subsystem):
     kToleranceDegrees = 2.0
 
     def __init__(self, robot):
-        print("[DriveTrain] Initialized")
         super().__init__("DriveTrain")
         self.robot = robot
 
@@ -36,7 +35,7 @@ class DriveTrain(Subsystem):
         else:
             self.kP = 0.02
             self.kI = 0.00
-            self.kD = 0.00
+            self.kD = 0.103
             self.kF = 0.00
 
         left_front_motor = ctre.WPI_TalonSRX(1)
@@ -69,15 +68,16 @@ class DriveTrain(Subsystem):
         self.drive.setSafetyEnabled(False)
         
         # setup NavX and turn controller
-        self.ahrs = AHRS.create_spi
+        self.ahrs = AHRS.create_spi()
 
-        # turnController = wpilib.PIDController(self.kP, self.kI, self.kD, self.kF, output=self)
-        # turnController.setInputRange(-180.0, 180.0)
-        # turnController.setOutputRange(-1.0, 1.0)
-        # turnController.setAbsoluteTolerance(self.kToleranceDegrees)
-        # turnController.setContinuous(True)
-
-        # self.turnController = turnController
+        turnController = wpilib.PIDController(
+            self.kP, self.kI, self.kD, source=self.ahrs, output=self
+        )
+        turnController.setInputRange(-180.0, 180.0)
+        turnController.setOutputRange(-1.0, 1.0)
+        turnController.setAbsoluteTolerance(self.kToleranceDegrees)
+        turnController.setContinuous(True)
+        self.turnController = turnController
         self.rotateToAngleRate = 0
 
         # setup LiveWindow
@@ -89,6 +89,7 @@ class DriveTrain(Subsystem):
         # wpilib.LiveWindow.addSensor("DriveTrain", "Left Encoder", self.left_encoder)
         # wpilib.LiveWindow.addSensor("DriveTrain", "Right Encoder", self.right_encoder)
         # wpilib.LiveWindow.addSensor("DriveTrain", "Gyro", self.ahrs)
+        wpilib.LiveWindow.addActuator("DriveTrain", "RotateController", self.turnController)
 
     def initAutonomousMode(self):
         self.left_front_motor.configSelectedFeedbackSensor(WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PID_LOOP_INDEX, self.TIMEOUT_MS )
@@ -130,6 +131,10 @@ class DriveTrain(Subsystem):
     def tankDrive(self, speed, rotation):
         self.drive.tankDrive(speed, speed)
 
+    def turn(self):
+        self.turnController.enable()
+        self.arcadeDrive(0.0, self.rotateToAngleRate)
+
     def resetDrive(self):
         self.left_front_motor.set(WPI_TalonSRX.ControlMode.PercentOutput, 0)
         self.left_rear_motor.set(WPI_TalonSRX.ControlMode.PercentOutput, 0)
@@ -144,18 +149,28 @@ class DriveTrain(Subsystem):
         self.right_front_motor.setInverted(True)
         self.right_rear_motor.setInverted(True)
 
-        # self.turnController.disable()
+        self.turnController.disable()
 
     def resetEncoders(self):
         self.left_front_motor.setSelectedSensorPosition(0, PID_LOOP_INDEX, TIMEOUT_MS)
         self.right_front_motor.setSelectedSensorPosition(0, PID_LOOP_INDEX, TIMEOUT_MS)
 
+    def resetGyro(self):
+        self.ahrs.reset()
+
     def stop(self):
         self.drive.arcadeDrive(0, 0)
+
+    def reachedAngle(self, angle):
+        return abs(self.ahrs.getAngle()) >= abs(angle) - self.kToleranceDegrees
 
     def initDefaultCommand(self):
         print("[DriveTrain] setting default command")
         self.setDefaultCommand(DriveByTriggers(self.robot))
+
+    def pidWrite(self, output):
+        # print("[DriveTrain] Output: ", output)
+        self.rotateToAngleRate = output
 
     def log(self):
         pass

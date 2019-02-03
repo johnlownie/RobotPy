@@ -4,6 +4,7 @@ from wpilib import SmartDashboard
 from wpilib.buttons import JoystickButton
 
 from commands.align_by_camera import AlignByCamera
+from commands.turn_by_gyro import TurnByGyro
 
 from subsystems.slider import Slider
 
@@ -17,6 +18,9 @@ class OI(object):
         self.driver_joystick = wpilib.XboxController(0)
         self.operator_joystick = wpilib.XboxController(1)
 
+        JoystickButton(self.driver_joystick, 3).whenPressed(TurnByGyro(robot, -90.0))
+        JoystickButton(self.driver_joystick, 4).whenPressed(TurnByGyro(robot,  90.0))
+        
         JoystickButton(self.operator_joystick, 4).whileHeld(AlignByCamera(robot))
 
     def getJoystickDriver(self):
