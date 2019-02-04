@@ -20,7 +20,7 @@ class AlignByCamera(Command):
     def initialize(self):
         print("[AlignByCamera] Initialize")
         self.robot.slider.stop()
-        pass
+        self.sd.putNumber("Offset", 0.0)
 
     def execute(self):
         offset = self.sd.getNumber("Offset", 0)
