@@ -20,7 +20,6 @@ class MyRobot(wpilib.TimedRobot):
     y = 0.0
 
     def robotInit(self):
-        # wpilib.CameraServer.launch("vision.py:main")
         print("[Robot] Initialized")
         self.drivetrain = DriveTrain(self)
         self.slider = Slider(self)
@@ -51,6 +50,7 @@ class MyRobot(wpilib.TimedRobot):
         scHatchPosition.addOption       ("3. Front"      , 30)
         wpilib.SmartDashboard.putData   ("Hatch Position", scHatchPosition)
 
+        wpilib.CameraServer.launch("d:\\jet\\projects\\python\\RobotPy\\src\\vision.py:main")
         # wpilib.SmartDashboard.putData(self.drivetrain)
 
     def teleopInit(self):
