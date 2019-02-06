@@ -12,6 +12,11 @@ from commands.drive_by_triggers import DriveByTriggers
 
 class DriveTrain(Subsystem):
     # set constants
+    DRIVETRAIN_LEFT_FRONT_MOTOR = 1
+    DRIVETRAIN_LEFT_REAR_MOTOR  = 2
+    DRIVETRAIN_RIGHT_FRONT_MOTOR = 3
+    DRIVETRAIN_RIGHT_REAR_MOTOR = 4
+
     WHEEL_DIAMETER = 0.625
     ENCODER_PULSE_PER_REV = 4096
     SLOT_INDEX = 0
@@ -38,23 +43,23 @@ class DriveTrain(Subsystem):
             self.kD = 0.103
             self.kF = 0.00
 
-        left_front_motor = ctre.WPI_TalonSRX(1)
+        left_front_motor = ctre.WPI_TalonSRX(self.DRIVETRAIN_LEFT_FRONT_MOTOR)
         left_front_motor.setInverted(False)
         left_front_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
         self.left_front_motor = left_front_motor
 
-        left_rear_motor = ctre.WPI_TalonSRX(2)
+        left_rear_motor = ctre.WPI_TalonSRX(self.DRIVETRAIN_LEFT_REAR_MOTOR)
         left_rear_motor.setInverted(False)
         left_rear_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
         left_rear_motor.follow(left_front_motor)
         self.left_rear_motor = left_rear_motor
 
-        right_front_motor = ctre.WPI_TalonSRX(3)
+        right_front_motor = ctre.WPI_TalonSRX(self.DRIVETRAIN_RIGHT_FRONT_MOTOR)
         right_front_motor.setInverted(True)
         right_front_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
         self.right_front_motor = right_front_motor
        
-        right_rear_motor  = ctre.WPI_TalonSRX(4)
+        right_rear_motor  = ctre.WPI_TalonSRX(self.DRIVETRAIN_RIGHT_REAR_MOTOR)
         right_rear_motor.setInverted(True)
         right_rear_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
         right_rear_motor.follow(right_front_motor)
