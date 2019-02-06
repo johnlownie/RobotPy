@@ -6,8 +6,6 @@ from wpilib.buttons import JoystickButton
 from commands.align_by_camera import AlignByCamera
 from commands.turn_by_gyro import TurnByGyro
 
-from subsystems.slider import Slider
-
 class OI(object):
     # set constants
     XBOX_DEADZONE_LEFT_JOY = 0.1

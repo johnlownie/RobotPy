@@ -3,8 +3,11 @@ import ctre
 
 from wpilib.command.subsystem import Subsystem
 from wpilib.drive import DifferentialDrive
+from wpilib.analoginput import AnalogInput
 from ctre import WPI_TalonSRX
 from ctre.basemotorcontroller import BaseMotorController
+
+from commands.climb_by_joystsick import ClimbByJoystick
 
 class ClimbSystem(Subsystem):
     # set constants
@@ -52,7 +55,7 @@ class ClimbSystem(Subsystem):
 
         self.drive = wpilib.drive.DifferentialDrive(left_crawl_motor, right_crawl_motor)
 
-        self.ultrasonic = wpilib.analoginput(self.CLIMB_ULTRASONIC)
+        self.ultrasonic = wpilib.AnalogInput(self.CLIMB_ULTRASONIC)
 
     def moveArm(self, speed):
         self.left_arm_motor.set(speed)
@@ -72,6 +75,5 @@ class ClimbSystem(Subsystem):
         return self.ultrasonic.getValue() * 0.125
 
     def initDefaultCommand(self):
-        # self.setDefaultCommand(DriveByTriggers(self.robot))
-        pass
+        self.setDefaultCommand(ClimbByJoystick(self.robot))
 

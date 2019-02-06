@@ -7,7 +7,7 @@ class TurnByGyro(Command):
 
     def __init__(self, robot, angle):
         super().__init__()
-        self.requires(robot.slider)
+        self.requires(robot.drivetrain)
         self.robot = robot
 
         self.angle = angle
