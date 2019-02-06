@@ -7,7 +7,7 @@ from wpilib.analoginput import AnalogInput
 from ctre import WPI_TalonSRX
 from ctre.basemotorcontroller import BaseMotorController
 
-from commands.climb_by_joystsick import ClimbByJoystick
+from commands.climb_by_joystick import ClimbByJoystick
 
 class ClimbSystem(Subsystem):
     # set constants
