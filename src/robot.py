@@ -12,7 +12,8 @@ from wpilib.shuffleboard import Shuffleboard
 
 from subsystems.oi import OI
 from subsystems.drivetrain import DriveTrain
-from subsystems.slider import Slider
+from subsystems.climbsystem import ClimbSystem
+from subsystems.hatchsystem import HatchSystem
 
 class MyRobot(wpilib.TimedRobot):
     table = NetworkTablesInstance.getDefault().getTable("Shuffleboard/LiveWindow")
@@ -22,7 +23,8 @@ class MyRobot(wpilib.TimedRobot):
     def robotInit(self):
         print("[Robot] Initialized")
         self.drivetrain = DriveTrain(self)
-        self.slider = Slider(self)
+        self.hatchsystem = HatchSystem(self)
+        self.climbsystem = ClimbSystem(self)
 
         self.oi = OI(self)
 

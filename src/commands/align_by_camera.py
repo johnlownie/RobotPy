@@ -9,7 +9,7 @@ import logging
 class AlignByCamera(Command):
     def __init__(self, robot):
         super().__init__()
-        self.requires(robot.slider)
+        self.requires(robot.hatchsystem)
         self.robot = robot
 
         logging.basicConfig(level=logging.DEBUG)

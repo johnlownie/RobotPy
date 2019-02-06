@@ -7,7 +7,7 @@ from wpilib import Compressor
 
 from commands.align_by_triggers import AlignByTriggers
 
-class Slider(Subsystem):
+class HatchSystem(Subsystem):
     # set constants
     SLIDER_MOTOR = 7
     PCM_CAN_ID = 11
