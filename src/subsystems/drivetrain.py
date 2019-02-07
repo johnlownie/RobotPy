@@ -28,6 +28,8 @@ class DriveTrain(Subsystem):
     kToleranceDegrees = 2.0
 
     def __init__(self, robot):
+        print("[DriveTrain] initializing")
+
         super().__init__("DriveTrain")
         self.robot = robot
 
@@ -96,11 +98,13 @@ class DriveTrain(Subsystem):
         # wpilib.LiveWindow.addSensor("DriveTrain", "Gyro", self.ahrs)
         wpilib.LiveWindow.addActuator("DriveTrain", "RotateController", self.turnController)
 
+        print("[DriveTrain] initialized")
+
     def initAutonomousMode(self):
         self.left_front_motor.configSelectedFeedbackSensor(WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PID_LOOP_INDEX, self.TIMEOUT_MS )
 
     def initMotionProfilingMode(self):
-        print("[DriveTrain] Motion Profiling Mode Initialized")
+        print("[DriveTrain] Motion Profiling Mode Initializing")
 
         self.left_front_motor.configSelectedFeedbackSensor(WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PID_LOOP_INDEX, self.TIMEOUT_MS)
         self.left_front_motor.setSensorPhase(True)
@@ -129,6 +133,8 @@ class DriveTrain(Subsystem):
         self.right_front_motor.setStatusFramePeriod(WPI_TalonSRX.StatusFrameEnhanced.Status_10_MotionMagic, 10, self.TIMEOUT_MS)
         self.right_front_motor.configMotionCruiseVelocity(6800, self.TIMEOUT_MS)
         self.right_front_motor.configMotionAcceleration(6800, self.TIMEOUT_MS)
+
+        print("[DriveTrain] Motion Profiling Mode Initialized")
 
     def arcadeDrive(self, speed, rotation):
         self.drive.arcadeDrive(speed, rotation * -1)

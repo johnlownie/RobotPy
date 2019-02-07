@@ -16,9 +16,11 @@ class AlignByTriggers(Command):
     def execute(self):
         # turn compressor on or off
 
-        if self.robot.oi.getJoystickDriver.getStartButtonReleased or self.robot.oi.getJoystickOperator.getStartButtonReleased:
+        if self.robot.oi.getJoystickDriver().getStartButtonPressed() or self.robot.oi.getJoystickOperator().getStartButtonPressed():
+            print("[AlignByTriggers] start charging pneumatics")
             self.robot.hatchsystem.setState(True)
-        elif self.robot.oi.getJoystickDriver.getBackButtonReleased or self.robot.oi.getJoystickOperator.getBackButtonReleased:
+        elif self.robot.oi.getJoystickDriver().getBackButtonPressed() or self.robot.oi.getJoystickOperator().getBackButtonPressed():
+            print("[AlignByTriggers] stop charging pneumatics")
             self.robot.hatchsystem.setState(False)
 
         # align hatch by triggers
@@ -31,10 +33,22 @@ class AlignByTriggers(Command):
         self.robot.hatchsystem.setSpeed(speed)
 
         # deploy the arm when X button is pressed
-        if self.robot.oi.getJoystickOperator.getXButtonPressed():
-            self.robot.hatchsystem.moveArm(1.0)
-        elif self.robot.oi.getJoystickOperator.getXButtonRelease():
-            self.robot.hatchsystem.moveArm(0.0)
+        if self.robot.oi.getJoystickOperator().getXButtonPressed():
+            self.robot.climbsystem.moveArm(1.0)
+        elif self.robot.oi.getJoystickOperator().getXButtonReleased():
+            self.robot.climbsystem.moveArm(0.0)
+
+        # deploy the leg when A button is pressed
+        if self.robot.oi.getJoystickOperator().getAButtonPressed():
+            self.robot.climbsystem.moveLeg(1.0)
+        elif self.robot.oi.getJoystickOperator().getAButtonReleased():
+            self.robot.climbsystem.moveLeg(0.0)
+
+        # fire the piston when B button is pressed
+        if self.robot.oi.getJoystickOperator().getBButtonPressed():
+            self.robot.hatchsystem.deploy()
+        elif self.robot.oi.getJoystickOperator().getBButtonReleased():
+            self.robot.hatchsystem.retract()
 
     def isFinished(self):
         return False

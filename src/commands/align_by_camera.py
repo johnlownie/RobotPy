@@ -19,25 +19,25 @@ class AlignByCamera(Command):
 
     def initialize(self):
         print("[AlignByCamera] Initialize")
-        self.robot.slider.stop()
+        self.robot.hatchsystem.stop()
         self.sd.putNumber("Offset", 0.0)
 
     def execute(self):
         offset = self.sd.getNumber("Offset", 0)
 
         if offset > 0:
-            self.robot.slider.setSpeed(1)
+            self.robot.hatchsystem.setSpeed(1)
         elif offset < 0:
-            self.robot.slider.setSpeed(-1)
+            self.robot.hatchsystem.setSpeed(-1)
         else:
-            self.robot.slider.setSpeed(0)
+            self.robot.hatchsystem.setSpeed(0)
 
     def isFinished(self):
         return False
 
     def end(self):
         print("[AlignByCamera] ending")
-        self.robot.slider.stop()
+        self.robot.hatchsystem.stop()
 
     def interrupted(self):
         print("[AlignByCamera] interrupted")

@@ -15,7 +15,8 @@ class HatchSystem(Subsystem):
     COMPRESSOR_PIN = 0
 
     def __init__(self, robot):
-        print("[HatchSystem] initialized")
+        print("[HatchSystem] initializing")
+
         super().__init__("HatchSystem")
         self.robot = robot
 
@@ -24,6 +25,8 @@ class HatchSystem(Subsystem):
         self.compressor = wpilib.Compressor(self.COMPRESSOR_PIN)
 
         wpilib.LiveWindow.addActuator("HatchSystem", "Alignment Motor", self.motor)
+
+        print("[HatchSystem] initialized")
 
     def setSpeed(self, speed):
         self.motor.set(speed)

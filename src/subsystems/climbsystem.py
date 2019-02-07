@@ -19,6 +19,11 @@ class ClimbSystem(Subsystem):
     CLIMB_ULTRASONIC = 1
 
     def __init__(self, robot):
+        print("[ClimbSystem] initializing")
+ 
+        super().__init__("ClimbSystem")
+        self.robot = robot
+ 
         left_arm_motor = ctre.WPI_TalonSRX(self.LEFT_ARM_MOTOR)
         left_arm_motor.setInverted(False)
         left_arm_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
@@ -54,8 +59,11 @@ class ClimbSystem(Subsystem):
         right_crawl_motor.set(WPI_TalonSRX.ControlMode.PercentOutput, 0.0)
 
         self.drive = wpilib.drive.DifferentialDrive(left_crawl_motor, right_crawl_motor)
+        self.drive.setSafetyEnabled(False)
 
         self.ultrasonic = wpilib.AnalogInput(self.CLIMB_ULTRASONIC)
+
+        print("[ClimbSystem] initialized")
 
     def moveArm(self, speed):
         self.left_arm_motor.set(speed)
@@ -75,5 +83,6 @@ class ClimbSystem(Subsystem):
         return self.ultrasonic.getValue() * 0.125
 
     def initDefaultCommand(self):
+        print("[ClimbSystem] setting default command")
         self.setDefaultCommand(ClimbByJoystick(self.robot))
 
