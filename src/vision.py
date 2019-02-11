@@ -15,9 +15,10 @@ from networktables import NetworkTablesInstance
 from scipy.interpolate import interp1d
 
 def main():
+    print("[Vision] Starting vision...")
     # connect to the roborio network tables
-    NetworkTables.initialize(server="127.0.0.1")
     livewindow = NetworkTablesInstance.getDefault().getTable("Shuffleboard/LiveWindow")
+    time.sleep(2.0)
 
     # initialize some variables
     width = 480
