@@ -11,18 +11,10 @@ class AlignByTriggers(Command):
         self.robot = robot
 
     def initialize(self):
+        print("[AlignByTriggers] initializing")
         pass
 
     def execute(self):
-        # turn compressor on or off
-
-        if self.robot.oi.getJoystickDriver().getStartButtonPressed() or self.robot.oi.getJoystickOperator().getStartButtonPressed():
-            print("[AlignByTriggers] start charging pneumatics")
-            self.robot.hatchsystem.setState(True)
-        elif self.robot.oi.getJoystickDriver().getBackButtonPressed() or self.robot.oi.getJoystickOperator().getBackButtonPressed():
-            print("[AlignByTriggers] stop charging pneumatics")
-            self.robot.hatchsystem.setState(False)
-
         # align hatch by triggers
         # speed = right trigger - left trigger
         speed = self.robot.oi.getJoystickOperator().getTriggerAxis(GenericHID.Hand.kRight) - self.robot.oi.getJoystickOperator().getTriggerAxis(GenericHID.Hand.kLeft)

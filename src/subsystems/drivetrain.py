@@ -88,15 +88,12 @@ class DriveTrain(Subsystem):
         self.rotateToAngleRate = 0
 
         # setup LiveWindow
-        wpilib.LiveWindow.addActuator("DriveTrain", "Front Left Motor", self.left_front_motor)
-        wpilib.LiveWindow.addActuator("DriveTrain", "Rear Left Motor", self.left_rear_motor)
-        wpilib.LiveWindow.addActuator("DriveTrain", "Front Right Motor", self.right_front_motor)
-        wpilib.LiveWindow.addActuator("DriveTrain", "Rear Right Motor", self.right_rear_motor)
-
-        # wpilib.LiveWindow.addSensor("DriveTrain", "Left Encoder", self.left_encoder)
-        # wpilib.LiveWindow.addSensor("DriveTrain", "Right Encoder", self.right_encoder)
-        # wpilib.LiveWindow.addSensor("DriveTrain", "Gyro", self.ahrs)
-        wpilib.LiveWindow.addActuator("DriveTrain", "RotateController", self.turnController)
+        self.left_front_motor.setName("DriveTrain", "Front Left Motor")
+        self.left_rear_motor.setName("DriveTrain", "Rear Left Motor")
+        self.right_front_motor.setName("DriveTrain", "Front Right Motor")
+        self.right_rear_motor.setName("DriveTrain", "Rear Right Motor")
+        self.ahrs.setName("DriveTrain", "Gyro")
+        self.turnController.setName("DriveTrain", "RotateController")
 
         print("[DriveTrain] initialized")
 
@@ -184,7 +181,7 @@ class DriveTrain(Subsystem):
         self.rotateToAngleRate = output
 
     def log(self):
-        pass
-        # wpilib.SmartDashboard.putNumber("Left Speed" , self.left_encoder.getRate())
-        # wpilib.SmartDashboard.putNumber("Right Speed", self.right_encoder.getRate())
-        # wpilib.SmartDashboard.putNumber("Gyro"       , self.ahrs.getAngle())
+        wpilib.SmartDashboard.putNumber("Angle", self.ahrs.getAngle())
+        wpilib.SmartDashboard.putNumber("Pitch", self.ahrs.getPitch())
+        wpilib.SmartDashboard.putNumber("Yaw", self.ahrs.getYaw())
+        wpilib.SmartDashboard.putNumber("Roll", self.ahrs.getRoll())

@@ -83,6 +83,7 @@ class ClimbSystem(Subsystem):
         return self.ultrasonic.getValue() * 0.125
 
     def initDefaultCommand(self):
-        print("[ClimbSystem] setting default command")
-        self.setDefaultCommand(ClimbByJoystick(self.robot))
+        pass
+        # print("[ClimbSystem] setting default command")
+        # self.setDefaultCommand(ClimbByJoystick(self.robot))
 

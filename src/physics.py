@@ -32,10 +32,10 @@ class PhysicsEngine(object):
             110 * units.lbs,                    # robot mass
             10.71,                              # drivetrain gear ratio
             2,                                  # motors per side
-            22 * units.inch,                    # robot wheelbase
-            23 * units.inch + bumper_width * 2, # robot width
-            32 * units.inch + bumper_width * 2, # robot length
-            6 * units.inch,                     # wheel diameter
+            19.625 * units.inch,                # robot wheelbase
+            30 * units.inch,                    # robot width
+            41.5 * units.inch,                  # robot length
+            7.625 * units.inch,                 # wheel diameter
         )
         # fmt: on
 

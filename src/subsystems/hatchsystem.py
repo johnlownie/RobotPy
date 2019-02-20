@@ -11,7 +11,8 @@ class HatchSystem(Subsystem):
     # set constants
     SLIDER_MOTOR = 7
     PCM_CAN_ID = 11
-    PISTON_ID = 1
+    LED_SOLENOID_ID = 0
+    PISTON_SOLENOID_ID = 1
     COMPRESSOR_PIN = 0
 
     def __init__(self, robot):
@@ -21,7 +22,8 @@ class HatchSystem(Subsystem):
         self.robot = robot
 
         self.motor = ctre.WPI_TalonSRX(self.SLIDER_MOTOR)
-        self.solenoid = wpilib.Solenoid(self.PCM_CAN_ID, self.PISTON_ID)
+        self.led = wpilib.Solenoid(self.PCM_CAN_ID, self.LED_SOLENOID_ID)
+        self.ejector = wpilib.Solenoid(self.PCM_CAN_ID, self.PISTON_SOLENOID_ID)
         self.compressor = wpilib.Compressor(self.COMPRESSOR_PIN)
 
         wpilib.LiveWindow.addActuator("HatchSystem", "Alignment Motor", self.motor)
@@ -35,13 +37,16 @@ class HatchSystem(Subsystem):
         self.motor.set(WPI_TalonSRX.ControlMode.PercentOutput, 0)
 
     def deploy(self):
-        self.solenoid.set(True)
+        self.ejector.set(True)
 
     def retract(self):
-        self.solenoid.set(False)
+        self.ejector.set(False)
 
-    def setState(self, enabled):
-        self.compressor.setClosedLoopControl(enabled)
+    def toggleCompressor(self):
+        self.compressor.setClosedLoopControl(not self.compressor.getClosedLoopControl())
+
+    def toggleLED(self):
+        self.led.set(not self.led.get())
 
     def initDefaultCommand(self):
         print("[HatchSystem] setting default command")

@@ -37,6 +37,7 @@ class DriveByTriggers(Command):
             rotation = 0.0
 
         self.robot.drivetrain.arcadeDrive(speed, rotation)
+        self.robot.drivetrain.log()
 
     def isFinished(self):
         return False

@@ -10,6 +10,7 @@ class ClimbByJoystick(Command):
         self.robot = robot
 
     def initialize(self):
+        print("[ClimbByJoystick] initializing")
         pass
 
     def execute(self):

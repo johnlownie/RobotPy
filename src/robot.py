@@ -11,8 +11,9 @@ from wpilib.command import Scheduler
 from wpilib.shuffleboard import Shuffleboard
 
 from subsystems.oi import OI
-from subsystems.drivetrain import DriveTrain
+from subsystems.cargosystem import CargoSystem
 from subsystems.climbsystem import ClimbSystem
+from subsystems.drivetrain import DriveTrain
 from subsystems.hatchsystem import HatchSystem
 
 class MyRobot(wpilib.TimedRobot):
@@ -24,9 +25,10 @@ class MyRobot(wpilib.TimedRobot):
         NetworkTables.initialize()
 
         print("[Robot] Setting up systems")
+        self.cargosystem = CargoSystem(self)
+        self.climbsystem = ClimbSystem(self)
         self.drivetrain = DriveTrain(self)
         self.hatchsystem = HatchSystem(self)
-        self.climbsystem = ClimbSystem(self)
 
         self.oi = OI(self)
 
