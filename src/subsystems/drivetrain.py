@@ -35,14 +35,14 @@ class DriveTrain(Subsystem):
 
         # set PIDF values
         if robot.isReal():
-            self.kP = 0.03
-            self.kI = 0.00
-            self.kD = 0.00
-            self.kF = 0.00
+            self.kP = 0.030
+            self.kI = 0.025
+            self.kD = 0.001
+            self.kF = 0.000
         else:
-            self.kP = 0.02
-            self.kI = 0.00
-            self.kD = 0.103
+            self.kP = 0.04
+            self.kI = 0.0004
+            self.kD = 0.14
             self.kF = 0.00
 
         left_front_motor = ctre.WPI_TalonSRX(self.DRIVETRAIN_LEFT_FRONT_MOTOR)
@@ -88,14 +88,19 @@ class DriveTrain(Subsystem):
         self.rotateToAngleRate = 0
 
         # setup LiveWindow
-        self.left_front_motor.setName("DriveTrain", "Front Left Motor")
-        self.left_rear_motor.setName("DriveTrain", "Rear Left Motor")
-        self.right_front_motor.setName("DriveTrain", "Front Right Motor")
-        self.right_rear_motor.setName("DriveTrain", "Rear Right Motor")
-        self.ahrs.setName("DriveTrain", "Gyro")
-        self.turnController.setName("DriveTrain", "RotateController")
+        # self.left_front_motor.setName("DriveTrain", "Front Left Motor")
+        # self.left_rear_motor.setName("DriveTrain", "Rear Left Motor")
+        # self.right_front_motor.setName("DriveTrain", "Front Right Motor")
+        # self.right_rear_motor.setName("DriveTrain", "Rear Right Motor")
+        # self.ahrs.setName("DriveTrain", "Gyross")
+        # self.turnController.setName("DriveTrain", "RotateControllers")
 
-        print("[DriveTrain] initialized")
+        wpilib.LiveWindow.addActuator("Drive Train", "Front Left Motor", self.left_front_motor)
+        wpilib.LiveWindow.addActuator("Drive Train", "Rear Left Motor", self.left_rear_motor)
+        wpilib.LiveWindow.addActuator("Drive Train", "Front Right Motor", self.right_front_motor)
+        wpilib.LiveWindow.addActuator("Drive Train", "Rear Right Motor", self.right_rear_motor)
+        wpilib.LiveWindow.addActuator("Drive Train", "RotateController", self.turnController)
+        wpilib.LiveWindow.addSensor("Drive Train", "Gyro", self.ahrs)
 
     def initAutonomousMode(self):
         self.left_front_motor.configSelectedFeedbackSensor(WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PID_LOOP_INDEX, self.TIMEOUT_MS )
@@ -177,7 +182,7 @@ class DriveTrain(Subsystem):
         self.setDefaultCommand(DriveByTriggers(self.robot))
 
     def pidWrite(self, output):
-        # print("[DriveTrain] Output: ", output)
+        print("[DriveTrain] Output: ", output)
         self.rotateToAngleRate = output
 
     def log(self):

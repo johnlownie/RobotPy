@@ -4,6 +4,7 @@ from wpilib import SmartDashboard
 from wpilib.buttons import JoystickButton
 
 from commands.actions.align_by_camera import AlignByCamera
+from commands.actions.climb_by_gyro import ClimbByGyro
 from commands.actions.deploy_hatch import DeployHatch
 from commands.actions.drop_cargo import DropCargo
 from commands.actions.toggle_compressor import ToggleCompressor
@@ -23,6 +24,7 @@ class OI(object):
         JoystickButton(self.driver_joystick, wpilib.XboxController.Button.kX).whenPressed(TurnByGyro(robot, -90.0))
         JoystickButton(self.driver_joystick, wpilib.XboxController.Button.kY).whenPressed(TurnByGyro(robot,  90.0))
         
+        JoystickButton(self.driver_joystick, wpilib.XboxController.Button.kBack).whenPressed(ClimbByGyro(robot))
         JoystickButton(self.driver_joystick, wpilib.XboxController.Button.kStart).whenPressed(ToggleCompressor(robot))
         
         # operator mappings

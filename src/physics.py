@@ -35,7 +35,7 @@ class PhysicsEngine(object):
             19.625 * units.inch,                # robot wheelbase
             30 * units.inch,                    # robot width
             41.5 * units.inch,                  # robot length
-            7.625 * units.inch,                 # wheel diameter
+            7.625 * units.inch                  # wheel diameter
         )
         # fmt: on
 

@@ -11,10 +11,10 @@ class TurnByGyro(Command):
         self.robot = robot
 
         self.angle = angle
-
         self.timer = Timer()
 
     def initialize(self):
+        print("[TurnByGyro] initializing")
         self.robot.drivetrain.resetGyro()
         self.robot.drivetrain.turnController.setSetpoint(self.angle)
 
@@ -29,14 +29,16 @@ class TurnByGyro(Command):
             print("[TurnByGyro] timed out")
             return True
 
-        if self.robot.drivetrain.reachedAngle(self.angle):
-            print("[TurnByGyro] reached target")
-            return True
+        # if self.robot.drivetrain.reachedAngle(self.angle):
+            # print("[TurnByGyro] reached target")
+            # return True
 
         return False
 
     def end(self):
+        print ("[TurnByGyro] ending")
         self.robot.drivetrain.resetDrive()
 
     def interrupted(self):
+        print ("[ClimbByGyro] interrupted")
         self.end()
