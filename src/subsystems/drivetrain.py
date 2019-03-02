@@ -47,22 +47,26 @@ class DriveTrain(Subsystem):
 
         left_front_motor = ctre.WPI_TalonSRX(self.DRIVETRAIN_LEFT_FRONT_MOTOR)
         left_front_motor.setInverted(False)
+        left_front_motor.setSensorPhase(False)
         left_front_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
         self.left_front_motor = left_front_motor
 
         left_rear_motor = ctre.WPI_TalonSRX(self.DRIVETRAIN_LEFT_REAR_MOTOR)
         left_rear_motor.setInverted(False)
+        left_rear_motor.setSensorPhase(False)
         left_rear_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
         left_rear_motor.follow(left_front_motor)
         self.left_rear_motor = left_rear_motor
 
         right_front_motor = ctre.WPI_TalonSRX(self.DRIVETRAIN_RIGHT_FRONT_MOTOR)
         right_front_motor.setInverted(True)
+        right_front_motor.setSensorPhase(False)
         right_front_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
         self.right_front_motor = right_front_motor
        
         right_rear_motor  = ctre.WPI_TalonSRX(self.DRIVETRAIN_RIGHT_REAR_MOTOR)
         right_rear_motor.setInverted(True)
+        right_rear_motor.setSensorPhase(False)
         right_rear_motor.setNeutralMode(BaseMotorController.NeutralMode.Brake)
         right_rear_motor.follow(right_front_motor)
         self.right_rear_motor = right_rear_motor
@@ -109,7 +113,7 @@ class DriveTrain(Subsystem):
         print("[DriveTrain] Motion Profiling Mode Initializing")
 
         self.left_front_motor.configSelectedFeedbackSensor(WPI_TalonSRX.FeedbackDevice.CTRE_MagEncoder_Relative, self.PID_LOOP_INDEX, self.TIMEOUT_MS)
-        self.left_front_motor.setSensorPhase(True)
+        self.left_front_motor.setSensorPhase(False)
         self.left_front_motor.configNeutralDeadband(self.NEUTRAL_DEADBAND_PERCENT * 0.01, self.TIMEOUT_MS)
 
         self.left_front_motor.config_kF(self.SLOT_INDEX, 0.0, self.TIMEOUT_MS)
@@ -190,3 +194,5 @@ class DriveTrain(Subsystem):
         wpilib.SmartDashboard.putNumber("Pitch", self.ahrs.getPitch())
         wpilib.SmartDashboard.putNumber("Yaw", self.ahrs.getYaw())
         wpilib.SmartDashboard.putNumber("Roll", self.ahrs.getRoll())
+        wpilib.SmartDashboard.putNumber("Sensor Left", self.left_front_motor.getSelectedSensorPosition(0))
+        wpilib.SmartDashboard.putNumber("Sensor Right", self.right_front_motor.getSelectedSensorPosition(0))
